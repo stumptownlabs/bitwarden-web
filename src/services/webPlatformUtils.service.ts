@@ -90,7 +90,7 @@ export class WebPlatformUtilsService implements PlatformUtilsService {
         const a = document.createElement('a');
         a.href = uri;
         if (options == null || !options.sameWindow) {
-            a.target = '_blank';
+            // a.target = '_blank';
             a.rel = 'noreferrer noopener';
         }
         a.classList.add('d-none');
