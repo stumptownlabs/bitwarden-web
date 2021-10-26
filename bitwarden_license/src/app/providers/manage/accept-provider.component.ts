@@ -22,16 +22,34 @@ export class AcceptProviderComponent extends BaseAcceptComponent {
 
     requiredParameters = ['providerId', 'providerUserId', 'token'];
 
-    constructor(router: Router, toasterService: ToasterService, i18nService: I18nService, route: ActivatedRoute,
-        userService: UserService, stateService: StateService, private apiService: ApiService) {
-        super(router, toasterService, i18nService, route, userService, stateService);
+    constructor(
+        router: Router,
+        toasterService: ToasterService,
+        i18nService: I18nService,
+        route: ActivatedRoute,
+        userService: UserService,
+        stateService: StateService,
+        private apiService: ApiService
+    ) {
+        super(
+            router,
+            toasterService,
+            i18nService,
+            route,
+            userService,
+            stateService
+        );
     }
 
     async authedHandler(qParams: any) {
         const request = new ProviderUserAcceptRequest();
         request.token = qParams.token;
 
-        await this.apiService.postProviderUserAccept(qParams.providerId, qParams.providerUserId, request);
+        await this.apiService.postProviderUserAccept(
+            qParams.providerId,
+            qParams.providerUserId,
+            request
+        );
         const toast: Toast = {
             type: 'success',
             title: this.i18nService.t('inviteAccepted'),

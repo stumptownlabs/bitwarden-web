@@ -1,9 +1,4 @@
-import {
-    Component,
-    OnInit,
-    ViewChild,
-    ViewContainerRef
-} from '@angular/core';
+import { Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ToasterService } from 'angular2-toaster';
 
@@ -23,22 +18,24 @@ import { PlanType } from 'jslib-common/enums/planType';
 import { ProviderUserType } from 'jslib-common/enums/providerUserType';
 
 import { Organization } from 'jslib-common/models/domain/organization';
-import {
-    ProviderOrganizationOrganizationDetailsResponse
-} from 'jslib-common/models/response/provider/providerOrganizationResponse';
+import { ProviderOrganizationOrganizationDetailsResponse } from 'jslib-common/models/response/provider/providerOrganizationResponse';
 
 import { ProviderService } from '../services/provider.service';
 
 import { AddOrganizationComponent } from './add-organization.component';
 
-const DisallowedPlanTypes = [PlanType.Free, PlanType.FamiliesAnnually2019, PlanType.FamiliesAnnually];
+const DisallowedPlanTypes = [
+    PlanType.Free,
+    PlanType.FamiliesAnnually2019,
+    PlanType.FamiliesAnnually,
+];
 
 @Component({
     templateUrl: 'clients.component.html',
 })
 export class ClientsComponent implements OnInit {
-
-    @ViewChild('add', { read: ViewContainerRef, static: true }) addModalRef: ViewContainerRef;
+    @ViewChild('add', { read: ViewContainerRef, static: true })
+    addModalRef: ViewContainerRef;
 
     providerId: any;
     searchText: string;
@@ -55,34 +52,56 @@ export class ClientsComponent implements OnInit {
     protected actionPromise: Promise<any>;
     private pagedClientsCount = 0;
 
-    constructor(private route: ActivatedRoute, private userService: UserService,
-        private apiService: ApiService, private searchService: SearchService,
-        private platformUtilsService: PlatformUtilsService, private i18nService: I18nService,
-        private toasterService: ToasterService, private validationService: ValidationService,
-        private providerService: ProviderService, private logService: LogService,
-        private modalService: ModalService) { }
+    constructor(
+        private route: ActivatedRoute,
+        private userService: UserService,
+        private apiService: ApiService,
+        private searchService: SearchService,
+        private platformUtilsService: PlatformUtilsService,
+        private i18nService: I18nService,
+        private toasterService: ToasterService,
+        private validationService: ValidationService,
+        private providerService: ProviderService,
+        private logService: LogService,
+        private modalService: ModalService
+    ) {}
 
     async ngOnInit() {
-        this.route.parent.params.subscribe(async params => {
+        this.route.parent.params.subscribe(async (params) => {
             this.providerId = params.providerId;
 
             await this.load();
 
-            this.route.queryParams.pipe(first()).subscribe(async qParams => {
+            this.route.queryParams.pipe(first()).subscribe(async (qParams) => {
                 this.searchText = qParams.search;
             });
         });
     }
 
     async load() {
-        const response = await this.apiService.getProviderClients(this.providerId);
-        this.clients = response.data != null && response.data.length > 0 ? response.data : [];
-        this.manageOrganizations = (await this.userService.getProvider(this.providerId)).type === ProviderUserType.ProviderAdmin;
-        const candidateOrgs = (await this.userService.getAllOrganizations()).filter(o => o.isOwner && o.providerId == null);
-        const allowedOrgsIds = await Promise.all(candidateOrgs.map(o => this.apiService.getOrganization(o.id))).then(orgs =>
-            orgs.filter(o => !DisallowedPlanTypes.includes(o.planType))
-                .map(o => o.id));
-        this.addableOrganizations = candidateOrgs.filter(o => allowedOrgsIds.includes(o.id));
+        const response = await this.apiService.getProviderClients(
+            this.providerId
+        );
+        this.clients =
+            response.data != null && response.data.length > 0
+                ? response.data
+                : [];
+        this.manageOrganizations =
+            (await this.userService.getProvider(this.providerId)).type ===
+            ProviderUserType.ProviderAdmin;
+        const candidateOrgs = (
+            await this.userService.getAllOrganizations()
+        ).filter((o) => o.isOwner && o.providerId == null);
+        const allowedOrgsIds = await Promise.all(
+            candidateOrgs.map((o) => this.apiService.getOrganization(o.id))
+        ).then((orgs) =>
+            orgs
+                .filter((o) => !DisallowedPlanTypes.includes(o.planType))
+                .map((o) => o.id)
+        );
+        this.addableOrganizations = candidateOrgs.filter((o) =>
+            allowedOrgsIds.includes(o.id)
+        );
 
         this.showAddExisting = this.addableOrganizations.length !== 0;
         this.loading = false;
@@ -93,7 +112,9 @@ export class ClientsComponent implements OnInit {
         if (searching && this.didScroll) {
             this.resetPaging();
         }
-        return !searching && this.clients && this.clients.length > this.pageSize;
+        return (
+            !searching && this.clients && this.clients.length > this.pageSize
+        );
     }
 
     isSearching() {
@@ -105,7 +126,6 @@ export class ClientsComponent implements OnInit {
         this.loadMore();
     }
 
-
     loadMore() {
         if (!this.clients || this.clients.length <= this.pageSize) {
             return;
@@ -116,40 +136,62 @@ export class ClientsComponent implements OnInit {
             pagedSize = this.pagedClientsCount;
         }
         if (this.clients.length > pagedLength) {
-            this.pagedClients = this.pagedClients.concat(this.clients.slice(pagedLength, pagedLength + pagedSize));
+            this.pagedClients = this.pagedClients.concat(
+                this.clients.slice(pagedLength, pagedLength + pagedSize)
+            );
         }
         this.pagedClientsCount = this.pagedClients.length;
         this.didScroll = this.pagedClients.length > this.pageSize;
     }
 
     async addExistingOrganization() {
-        const [modal] = await this.modalService.openViewRef(AddOrganizationComponent, this.addModalRef, comp => {
-            comp.providerId = this.providerId;
-            comp.organizations = this.addableOrganizations;
-            comp.onAddedOrganization.subscribe(async () => {
-                try {
-                    await this.load();
-                    modal.close();
-                } catch (e) {
-                    this.logService.error(`Handled exception: ${e}`);
-                }
-            });
-        });
+        const [modal] = await this.modalService.openViewRef(
+            AddOrganizationComponent,
+            this.addModalRef,
+            (comp) => {
+                comp.providerId = this.providerId;
+                comp.organizations = this.addableOrganizations;
+                comp.onAddedOrganization.subscribe(async () => {
+                    try {
+                        await this.load();
+                        modal.close();
+                    } catch (e) {
+                        this.logService.error(`Handled exception: ${e}`);
+                    }
+                });
+            }
+        );
     }
 
-    async remove(organization: ProviderOrganizationOrganizationDetailsResponse) {
+    async remove(
+        organization: ProviderOrganizationOrganizationDetailsResponse
+    ) {
         const confirmed = await this.platformUtilsService.showDialog(
-            this.i18nService.t('detachOrganizationConfirmation'), organization.organizationName,
-            this.i18nService.t('yes'), this.i18nService.t('no'), 'warning');
+            this.i18nService.t('detachOrganizationConfirmation'),
+            organization.organizationName,
+            this.i18nService.t('yes'),
+            this.i18nService.t('no'),
+            'warning'
+        );
 
         if (!confirmed) {
             return false;
         }
 
-        this.actionPromise = this.providerService.detachOrganizastion(this.providerId, organization.id);
+        this.actionPromise = this.providerService.detachOrganizastion(
+            this.providerId,
+            organization.id
+        );
         try {
             await this.actionPromise;
-            this.toasterService.popAsync('success', null, this.i18nService.t('detachedOrganization', organization.organizationName));
+            this.toasterService.popAsync(
+                'success',
+                null,
+                this.i18nService.t(
+                    'detachedOrganization',
+                    organization.organizationName
+                )
+            );
             await this.load();
         } catch (e) {
             this.validationService.showError(e);

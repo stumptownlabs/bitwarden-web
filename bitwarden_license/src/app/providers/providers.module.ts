@@ -33,12 +33,7 @@ import { SetupComponent } from './setup/setup.component';
 import { OssModule } from 'src/app/oss.module';
 
 @NgModule({
-    imports: [
-        CommonModule,
-        FormsModule,
-        OssModule,
-        ProvidersRoutingModule,
-    ],
+    imports: [CommonModule, FormsModule, OssModule, ProvidersRoutingModule],
     declarations: [
         AcceptProviderComponent,
         AccountComponent,
@@ -63,7 +58,13 @@ import { OssModule } from 'src/app/oss.module';
     ],
 })
 export class ProvidersModule {
-    constructor(modalService: ModalService, componentFactoryResolver: ComponentFactoryResolver) {
-        modalService.registerComponentFactoryResolver(AddOrganizationComponent, componentFactoryResolver);
+    constructor(
+        modalService: ModalService,
+        componentFactoryResolver: ComponentFactoryResolver
+    ) {
+        modalService.registerComponentFactoryResolver(
+            AddOrganizationComponent,
+            componentFactoryResolver
+        );
     }
 }

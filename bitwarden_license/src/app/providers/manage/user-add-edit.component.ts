@@ -1,10 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 import { ToasterService } from 'angular2-toaster';
 
@@ -43,9 +37,13 @@ export class UserAddEditComponent implements OnInit {
     deletePromise: Promise<any>;
     userType = ProviderUserType;
 
-    constructor(private apiService: ApiService, private i18nService: I18nService,
-        private toasterService: ToasterService, private platformUtilsService: PlatformUtilsService,
-        private logService: LogService) { }
+    constructor(
+        private apiService: ApiService,
+        private i18nService: I18nService,
+        private toasterService: ToasterService,
+        private platformUtilsService: PlatformUtilsService,
+        private logService: LogService
+    ) {}
 
     async ngOnInit() {
         this.editMode = this.loading = this.providerUserId != null;
@@ -54,7 +52,10 @@ export class UserAddEditComponent implements OnInit {
             this.editMode = true;
             this.title = this.i18nService.t('editUser');
             try {
-                const user = await this.apiService.getProviderUser(this.providerId, this.providerUserId);
+                const user = await this.apiService.getProviderUser(
+                    this.providerId,
+                    this.providerUserId
+                );
                 this.type = user.type;
             } catch (e) {
                 this.logService.error(e);
@@ -71,16 +72,29 @@ export class UserAddEditComponent implements OnInit {
             if (this.editMode) {
                 const request = new ProviderUserUpdateRequest();
                 request.type = this.type;
-                this.formPromise = this.apiService.putProviderUser(this.providerId, this.providerUserId, request);
+                this.formPromise = this.apiService.putProviderUser(
+                    this.providerId,
+                    this.providerUserId,
+                    request
+                );
             } else {
                 const request = new ProviderUserInviteRequest();
                 request.emails = this.emails.trim().split(/\s*,\s*/);
                 request.type = this.type;
-                this.formPromise = this.apiService.postProviderUserInvite(this.providerId, request);
+                this.formPromise = this.apiService.postProviderUserInvite(
+                    this.providerId,
+                    request
+                );
             }
             await this.formPromise;
-            this.toasterService.popAsync('success', null,
-                this.i18nService.t(this.editMode ? 'editedUserId' : 'invitedUsers', this.name));
+            this.toasterService.popAsync(
+                'success',
+                null,
+                this.i18nService.t(
+                    this.editMode ? 'editedUserId' : 'invitedUsers',
+                    this.name
+                )
+            );
             this.onSavedUser.emit();
         } catch (e) {
             this.logService.error(e);
@@ -93,20 +107,30 @@ export class UserAddEditComponent implements OnInit {
         }
 
         const confirmed = await this.platformUtilsService.showDialog(
-            this.i18nService.t('removeUserConfirmation'), this.name,
-            this.i18nService.t('yes'), this.i18nService.t('no'), 'warning');
+            this.i18nService.t('removeUserConfirmation'),
+            this.name,
+            this.i18nService.t('yes'),
+            this.i18nService.t('no'),
+            'warning'
+        );
         if (!confirmed) {
             return false;
         }
 
         try {
-            this.deletePromise = this.apiService.deleteProviderUser(this.providerId, this.providerUserId);
+            this.deletePromise = this.apiService.deleteProviderUser(
+                this.providerId,
+                this.providerUserId
+            );
             await this.deletePromise;
-            this.toasterService.popAsync('success', null, this.i18nService.t('removedUserId', this.name));
+            this.toasterService.popAsync(
+                'success',
+                null,
+                this.i18nService.t('removedUserId', this.name)
+            );
             this.onDeletedUser.emit();
         } catch (e) {
             this.logService.error(e);
         }
     }
-
 }

@@ -7,7 +7,10 @@ import { PolicyType } from 'jslib-common/enums/policyType';
 
 import { PolicyRequest } from 'jslib-common/models/request/policyRequest';
 
-import { BasePolicy, BasePolicyComponent } from 'src/app/organizations/policies/base-policy.component';
+import {
+    BasePolicy,
+    BasePolicyComponent,
+} from 'src/app/organizations/policies/base-policy.component';
 
 export class MaximumVaultTimeoutPolicy extends BasePolicy {
     name = 'maximumVaultTimeout';
@@ -21,7 +24,6 @@ export class MaximumVaultTimeoutPolicy extends BasePolicy {
     templateUrl: 'maximum-vault-timeout.component.html',
 })
 export class MaximumVaultTimeoutPolicyComponent extends BasePolicyComponent {
-
     data = this.fb.group({
         hours: [null],
         minutes: [null],
@@ -54,8 +56,11 @@ export class MaximumVaultTimeoutPolicyComponent extends BasePolicyComponent {
         };
     }
 
-    buildRequest(policiesEnabledMap: Map<PolicyType, boolean>): Promise<PolicyRequest> {
-        const singleOrgEnabled = policiesEnabledMap.get(PolicyType.SingleOrg) ?? false;
+    buildRequest(
+        policiesEnabledMap: Map<PolicyType, boolean>
+    ): Promise<PolicyRequest> {
+        const singleOrgEnabled =
+            policiesEnabledMap.get(PolicyType.SingleOrg) ?? false;
         if (this.enabled.value && !singleOrgEnabled) {
             throw new Error(this.i18nService.t('requireSsoPolicyReqError'));
         }

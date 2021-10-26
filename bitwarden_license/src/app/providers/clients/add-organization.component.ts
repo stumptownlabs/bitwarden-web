@@ -1,10 +1,4 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ToasterService } from 'angular2-toaster';
 
 import { ApiService } from 'jslib-common/abstractions/api.service';
@@ -26,7 +20,6 @@ import { PlanType } from 'jslib-common/enums/planType';
     templateUrl: 'add-organization.component.html',
 })
 export class AddOrganizationComponent implements OnInit {
-
     @Input() providerId: string;
     @Input() organizations: Organization[];
     @Output() onAddedOrganization = new EventEmitter();
@@ -35,10 +28,15 @@ export class AddOrganizationComponent implements OnInit {
     formPromise: Promise<any>;
     loading = true;
 
-    constructor(private userService: UserService, private providerService: ProviderService,
-        private toasterService: ToasterService, private i18nService: I18nService,
-        private platformUtilsService: PlatformUtilsService, private validationService: ValidationService,
-        private apiService: ApiService) { }
+    constructor(
+        private userService: UserService,
+        private providerService: ProviderService,
+        private toasterService: ToasterService,
+        private i18nService: I18nService,
+        private platformUtilsService: PlatformUtilsService,
+        private validationService: ValidationService,
+        private apiService: ApiService
+    ) {}
 
     async ngOnInit() {
         await this.load();
@@ -60,15 +58,26 @@ export class AddOrganizationComponent implements OnInit {
         }
 
         const confirmed = await this.platformUtilsService.showDialog(
-            this.i18nService.t('addOrganizationConfirmation', organization.name, this.provider.name), organization.name,
-            this.i18nService.t('yes'), this.i18nService.t('no'), 'warning');
+            this.i18nService.t(
+                'addOrganizationConfirmation',
+                organization.name,
+                this.provider.name
+            ),
+            organization.name,
+            this.i18nService.t('yes'),
+            this.i18nService.t('no'),
+            'warning'
+        );
 
         if (!confirmed) {
             return false;
         }
 
         try {
-            this.formPromise = this.providerService.addOrganizationToProvider(this.providerId, organization.id);
+            this.formPromise = this.providerService.addOrganizationToProvider(
+                this.providerId,
+                organization.id
+            );
             await this.formPromise;
         } catch (e) {
             this.validationService.showError(e);
@@ -77,7 +86,11 @@ export class AddOrganizationComponent implements OnInit {
             this.formPromise = null;
         }
 
-        this.toasterService.popAsync('success', null, this.i18nService.t('organizationJoinedProvider'));
+        this.toasterService.popAsync(
+            'success',
+            null,
+            this.i18nService.t('organizationJoinedProvider')
+        );
         this.onAddedOrganization.emit();
     }
 }

@@ -1,7 +1,4 @@
-import {
-    Component,
-    OnInit,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -15,7 +12,6 @@ import { OrganizationSsoRequest } from 'jslib-common/models/request/organization
     templateUrl: 'sso.component.html',
 })
 export class SsoComponent implements OnInit {
-
     samlSigningAlgorithms = [
         'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
         'http://www.w3.org/2000/09/xmldsig#rsa-sha384',
@@ -74,18 +70,25 @@ export class SsoComponent implements OnInit {
         idpWantAuthnRequestsSigned: [],
     });
 
-    constructor(private fb: FormBuilder, private route: ActivatedRoute, private apiService: ApiService,
-        private platformUtilsService: PlatformUtilsService, private i18nService: I18nService) { }
+    constructor(
+        private fb: FormBuilder,
+        private route: ActivatedRoute,
+        private apiService: ApiService,
+        private platformUtilsService: PlatformUtilsService,
+        private i18nService: I18nService
+    ) {}
 
     async ngOnInit() {
-        this.route.parent.parent.params.subscribe(async params => {
+        this.route.parent.parent.params.subscribe(async (params) => {
             this.organizationId = params.organizationId;
             await this.load();
         });
     }
 
     async load() {
-        const ssoSettings = await this.apiService.getOrganizationSso(this.organizationId);
+        const ssoSettings = await this.apiService.getOrganizationSso(
+            this.organizationId
+        );
 
         this.data.patchValue(ssoSettings.data);
         this.enabled.setValue(ssoSettings.enabled);
@@ -112,13 +115,20 @@ export class SsoComponent implements OnInit {
         request.enabled = this.enabled.value;
         request.data = this.data.value;
 
-        this.formPromise = this.apiService.postOrganizationSso(this.organizationId, request);
+        this.formPromise = this.apiService.postOrganizationSso(
+            this.organizationId,
+            request
+        );
 
         const response = await this.formPromise;
         this.data.patchValue(response.data);
         this.enabled.setValue(response.enabled);
 
         this.formPromise = null;
-        this.platformUtilsService.showToast('success', null, this.i18nService.t('ssoSettingsSaved'));
+        this.platformUtilsService.showToast(
+            'success',
+            null,
+            this.i18nService.t('ssoSettingsSaved')
+        );
     }
 }

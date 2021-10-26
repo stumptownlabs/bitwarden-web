@@ -15,8 +15,6 @@ import { OrganizationsRoutingModule } from './organizations-routing.module';
         OssModule,
         OrganizationsRoutingModule,
     ],
-    declarations: [
-        SsoComponent,
-    ],
+    declarations: [SsoComponent],
 })
 export class OrganizationsModule {}

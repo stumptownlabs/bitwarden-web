@@ -12,7 +12,8 @@ const pjson = require('./package.json');
 const config = require('./config.js');
 
 const ENV = process.env.ENV == null ? 'development' : process.env.ENV;
-const NODE_ENV = process.env.NODE_ENV == null ? 'development' : process.env.NODE_ENV;
+const NODE_ENV =
+    process.env.NODE_ENV == null ? 'development' : process.env.NODE_ENV;
 
 const envConfig = config.load(ENV);
 config.log(envConfig);
@@ -30,24 +31,28 @@ const moduleRules = [
     {
         test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
         exclude: /loading(|-white).svg/,
-        use: [{
-            loader: 'file-loader',
-            options: {
-                name: '[name].[ext]',
-                outputPath: 'fonts/',
+        use: [
+            {
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'fonts/',
+                },
             },
-        }],
+        ],
     },
     {
         test: /\.(jpe?g|png|gif|svg)$/i,
         exclude: /.*(fontawesome-webfont)\.svg/,
-        use: [{
-            loader: 'file-loader',
-            options: {
-                name: '[name].[ext]',
-                outputPath: 'images/',
+        use: [
+            {
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]',
+                    outputPath: 'images/',
+                },
             },
-        }],
+        ],
     },
     {
         test: /\.scss$/,
@@ -76,8 +81,10 @@ const moduleRules = [
 const plugins = [
     new CleanWebpackPlugin(),
     // ref: https://github.com/angular/angular/issues/20357
-    new webpack.ContextReplacementPlugin(/\@angular(\\|\/)core(\\|\/)fesm5/,
-        path.resolve(__dirname, './src')),
+    new webpack.ContextReplacementPlugin(
+        /\@angular(\\|\/)core(\\|\/)fesm5/,
+        path.resolve(__dirname, './src')
+    ),
     new HtmlWebpackPlugin({
         template: './src/index.html',
         filename: 'index.html',
@@ -125,7 +132,7 @@ const plugins = [
         chunks: ['connectors/captcha'],
     }),
     new CopyWebpackPlugin({
-        patterns:[
+        patterns: [
             { from: './src/.nojekyll' },
             { from: './src/manifest.json' },
             { from: './src/favicon.ico' },
@@ -137,13 +144,21 @@ const plugins = [
             { from: './src/locales', to: 'locales' },
             { from: './src/scripts', to: 'scripts' },
             { from: './node_modules/qrious/dist/qrious.min.js', to: 'scripts' },
-            { from: './node_modules/braintree-web-drop-in/dist/browser/dropin.js', to: 'scripts' },
+            {
+                from: './node_modules/braintree-web-drop-in/dist/browser/dropin.js',
+                to: 'scripts',
+            },
             {
                 from: './src/version.json',
-                transform (content, path) {
-                    return content.toString().replace('process.env.APPLICATION_VERSION', pjson.version);
+                transform(content, path) {
+                    return content
+                        .toString()
+                        .replace(
+                            'process.env.APPLICATION_VERSION',
+                            pjson.version
+                        );
                 },
-            }
+            },
         ],
     }),
     new MiniCssExtractPlugin({
@@ -151,14 +166,14 @@ const plugins = [
         chunkFilename: '[id].[hash].css',
     }),
     new webpack.EnvironmentPlugin({
-        'ENV': ENV,
-        'NODE_ENV': NODE_ENV === 'production' ? 'production' : 'development',
-        'APPLICATION_VERSION': pjson.version,
-        'CACHE_TAG': Math.random().toString(36).substring(7),
-        'URLS': envConfig['urls'] ?? {},
-        'STRIPE_KEY': envConfig['stripeKey'] ?? '', 
-        'BRAINTREE_KEY': envConfig['braintreeKey'] ?? '',
-        'PAYPAL_CONFIG': envConfig['paypal'] ?? {},
+        ENV: ENV,
+        NODE_ENV: NODE_ENV === 'production' ? 'production' : 'development',
+        APPLICATION_VERSION: pjson.version,
+        CACHE_TAG: Math.random().toString(36).substring(7),
+        URLS: envConfig['urls'] ?? {},
+        STRIPE_KEY: envConfig['stripeKey'] ?? '',
+        BRAINTREE_KEY: envConfig['braintreeKey'] ?? '',
+        PAYPAL_CONFIG: envConfig['paypal'] ?? {},
     }),
     new AngularCompilerPlugin({
         tsConfigPath: 'tsconfig.json',
@@ -169,41 +184,44 @@ const plugins = [
 
 // ref: https://webpack.js.org/configuration/dev-server/#devserver
 let certSuffix = fs.existsSync('dev-server.local.pem') ? '.local' : '.shared';
-const devServer = NODE_ENV !== 'development' ? {} : {
-    https: {
-        key: fs.readFileSync('dev-server' + certSuffix + '.pem'),
-        cert: fs.readFileSync('dev-server' + certSuffix + '.pem'),
-    },
-    // host: '192.168.1.9',
-    proxy: {
-        '/api': {
-            target: envConfig.dev?.proxyApi,
-            pathRewrite: {'^/api' : ''},
-            secure: false,
-            changeOrigin: true
-        },
-        '/identity': {
-            target: envConfig.dev?.proxyIdentity,
-            pathRewrite: {'^/identity' : ''},
-            secure: false,
-            changeOrigin: true
-        },
-        '/events': {
-            target: envConfig.dev?.proxyEvents,
-            pathRewrite: {'^/events' : ''},
-            secure: false,
-            changeOrigin: true
-        },
-        '/notifications': {
-            target: envConfig.dev?.proxyNotifications,
-            pathRewrite: {'^/notifications' : ''},
-            secure: false,
-            changeOrigin: true
-        },
-    },
-    hot: false,
-    allowedHosts: envConfig.dev?.allowedHosts,
-};
+const devServer =
+    NODE_ENV !== 'development'
+        ? {}
+        : {
+              https: {
+                  key: fs.readFileSync('dev-server' + certSuffix + '.pem'),
+                  cert: fs.readFileSync('dev-server' + certSuffix + '.pem'),
+              },
+              // host: '192.168.1.9',
+              proxy: {
+                  '/api': {
+                      target: envConfig.dev?.proxyApi,
+                      pathRewrite: { '^/api': '' },
+                      secure: false,
+                      changeOrigin: true,
+                  },
+                  '/identity': {
+                      target: envConfig.dev?.proxyIdentity,
+                      pathRewrite: { '^/identity': '' },
+                      secure: false,
+                      changeOrigin: true,
+                  },
+                  '/events': {
+                      target: envConfig.dev?.proxyEvents,
+                      pathRewrite: { '^/events': '' },
+                      secure: false,
+                      changeOrigin: true,
+                  },
+                  '/notifications': {
+                      target: envConfig.dev?.proxyNotifications,
+                      pathRewrite: { '^/notifications': '' },
+                      secure: false,
+                      changeOrigin: true,
+                  },
+              },
+              hot: false,
+              allowedHosts: envConfig.dev?.allowedHosts,
+          };
 
 const webpackConfig = {
     mode: NODE_ENV,
@@ -218,10 +236,10 @@ const webpackConfig = {
         'connectors/duo': './src/connectors/duo.ts',
         'connectors/sso': './src/connectors/sso.ts',
         'connectors/captcha': './src/connectors/captcha.ts',
-        'theme_head': './src/theme.js',
+        theme_head: './src/theme.js',
     },
     externals: {
-        'u2f': 'u2f',
+        u2f: 'u2f',
     },
     optimization: {
         splitChunks: {

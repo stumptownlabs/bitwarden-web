@@ -7,14 +7,13 @@ import { BaseAcceptComponent } from 'src/app/common/base.accept.component';
     templateUrl: 'setup-provider.component.html',
 })
 export class SetupProviderComponent extends BaseAcceptComponent {
-
     failedShortMessage = 'inviteAcceptFailedShort';
     failedMessage = 'inviteAcceptFailed';
 
     requiredParameters = ['providerId', 'email', 'token'];
 
     async authedHandler(qParams: any) {
-        this.router.navigate(['/providers/setup'], {queryParams: qParams});
+        this.router.navigate(['/providers/setup'], { queryParams: qParams });
     }
 
     // tslint:disable-next-line

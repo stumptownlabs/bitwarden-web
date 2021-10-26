@@ -7,7 +7,10 @@ import { PolicyType } from 'jslib-common/enums/policyType';
 
 import { PolicyRequest } from 'jslib-common/models/request/policyRequest';
 
-import { BasePolicy, BasePolicyComponent } from 'src/app/organizations/policies/base-policy.component';
+import {
+    BasePolicy,
+    BasePolicyComponent,
+} from 'src/app/organizations/policies/base-policy.component';
 
 export class DisablePersonalVaultExportPolicy extends BasePolicy {
     name = 'disablePersonalVaultExport';
@@ -20,5 +23,4 @@ export class DisablePersonalVaultExportPolicy extends BasePolicy {
     selector: 'policy-disable-personal-vault-export',
     templateUrl: 'disable-personal-vault-export.component.html',
 })
-export class DisablePersonalVaultExportPolicyComponent extends BasePolicyComponent {
-}
+export class DisablePersonalVaultExportPolicyComponent extends BasePolicyComponent {}

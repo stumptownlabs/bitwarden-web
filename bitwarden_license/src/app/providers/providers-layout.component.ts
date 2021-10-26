@@ -10,15 +10,17 @@ import { Provider } from 'jslib-common/models/domain/provider';
     templateUrl: 'providers-layout.component.html',
 })
 export class ProvidersLayoutComponent {
-
     provider: Provider;
     private providerId: string;
 
-    constructor(private route: ActivatedRoute, private userService: UserService) { }
+    constructor(
+        private route: ActivatedRoute,
+        private userService: UserService
+    ) {}
 
     ngOnInit() {
         document.body.classList.remove('layout_frontend');
-        this.route.params.subscribe(async params => {
+        this.route.params.subscribe(async (params) => {
             this.providerId = params.providerId;
             await this.load();
         });

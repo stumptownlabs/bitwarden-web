@@ -23,8 +23,8 @@
 
 ### Requirements
 
-- [Node.js](https://nodejs.org) v14.17 or greater
-- NPM v7
+-   [Node.js](https://nodejs.org) v14.17 or greater
+-   NPM v7
 
 ### Run the app
 
@@ -53,11 +53,9 @@ You can also manually adjusting your API endpoint settings by adding `config/loc
         "proxyIdentity": "http://your-identity-url",
         "proxyEvents": "http://your-events-url",
         "proxyNotifications": "http://your-notifications-url",
-        "allowedHosts": ["hostnames-to-allow-in-webpack"],
+        "allowedHosts": ["hostnames-to-allow-in-webpack"]
     },
-    "urls": {
-      
-    }
+    "urls": {}
 }
 ```
 

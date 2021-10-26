@@ -9,12 +9,17 @@ import { UserService } from 'jslib-common/abstractions/user.service';
     templateUrl: 'settings.component.html',
 })
 export class SettingsComponent {
-    constructor(private route: ActivatedRoute, private userService: UserService,
-        private platformUtilsService: PlatformUtilsService) { }
+    constructor(
+        private route: ActivatedRoute,
+        private userService: UserService,
+        private platformUtilsService: PlatformUtilsService
+    ) {}
 
     ngOnInit() {
-        this.route.parent.params.subscribe(async params => {
-            const provider = await this.userService.getProvider(params.providerId);
+        this.route.parent.params.subscribe(async (params) => {
+            const provider = await this.userService.getProvider(
+                params.providerId
+            );
         });
     }
 }

@@ -41,4 +41,4 @@ import { WildcardRoutingModule } from 'src/app/wildcard-routing.module';
     ],
     bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

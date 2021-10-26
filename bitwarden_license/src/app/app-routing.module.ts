@@ -4,7 +4,8 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
     {
         path: 'providers',
-        loadChildren: async () => (await import('./providers/providers.module')).ProvidersModule,
+        loadChildren: async () =>
+            (await import('./providers/providers.module')).ProvidersModule,
     },
 ];
 
@@ -12,4 +13,4 @@ const routes: Routes = [
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -1,7 +1,4 @@
-import {
-    Component,
-    Input,
-} from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { ProviderUserBulkConfirmRequest } from 'jslib-common/models/request/provider/providerUserBulkConfirmRequest';
 import { ProviderUserBulkRequest } from 'jslib-common/models/request/provider/providerUserBulkRequest';
@@ -12,10 +9,10 @@ import { BulkConfirmComponent as OrganizationBulkConfirmComponent } from 'src/ap
 import { BulkUserDetails } from 'src/app/organizations/manage/bulk/bulk-status.component';
 
 @Component({
-    templateUrl: '/src/app/organizations/manage/bulk/bulk-confirm.component.html',
+    templateUrl:
+        '/src/app/organizations/manage/bulk/bulk-confirm.component.html',
 })
 export class BulkConfirmComponent extends OrganizationBulkConfirmComponent {
-
     @Input() providerId: string;
 
     protected isAccepted(user: BulkUserDetails) {
@@ -23,8 +20,13 @@ export class BulkConfirmComponent extends OrganizationBulkConfirmComponent {
     }
 
     protected async getPublicKeys() {
-        const request = new ProviderUserBulkRequest(this.filteredUsers.map(user => user.id));
-        return await this.apiService.postProviderUsersPublicKey(this.providerId, request);
+        const request = new ProviderUserBulkRequest(
+            this.filteredUsers.map((user) => user.id)
+        );
+        return await this.apiService.postProviderUsersPublicKey(
+            this.providerId,
+            request
+        );
     }
 
     protected getCryptoKey() {
@@ -33,6 +35,9 @@ export class BulkConfirmComponent extends OrganizationBulkConfirmComponent {
 
     protected async postConfirmRequest(userIdsWithKeys: any[]) {
         const request = new ProviderUserBulkConfirmRequest(userIdsWithKeys);
-        return await this.apiService.postProviderUserBulkConfirm(this.providerId, request);
+        return await this.apiService.postProviderUserBulkConfirm(
+            this.providerId,
+            request
+        );
     }
 }

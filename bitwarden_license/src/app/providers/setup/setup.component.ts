@@ -1,15 +1,6 @@
-import {
-    Component,
-    OnInit,
-} from '@angular/core';
-import {
-    ActivatedRoute,
-    Router,
-} from '@angular/router';
-import {
-    Toast,
-    ToasterService,
-} from 'angular2-toaster';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Toast, ToasterService } from 'angular2-toaster';
 
 import { first } from 'rxjs/operators';
 
@@ -36,15 +27,24 @@ export class SetupComponent implements OnInit {
     name: string;
     billingEmail: string;
 
-    constructor(private router: Router, private toasterService: ToasterService,
-        private i18nService: I18nService, private route: ActivatedRoute,
-        private cryptoService: CryptoService, private apiService: ApiService,
-        private syncService: SyncService, private validationService: ValidationService) { }
+    constructor(
+        private router: Router,
+        private toasterService: ToasterService,
+        private i18nService: I18nService,
+        private route: ActivatedRoute,
+        private cryptoService: CryptoService,
+        private apiService: ApiService,
+        private syncService: SyncService,
+        private validationService: ValidationService
+    ) {}
 
     ngOnInit() {
         document.body.classList.remove('layout_frontend');
-        this.route.queryParams.pipe(first()).subscribe(async qParams => {
-            const error = qParams.providerId == null || qParams.email == null || qParams.token == null;
+        this.route.queryParams.pipe(first()).subscribe(async (qParams) => {
+            const error =
+                qParams.providerId == null ||
+                qParams.email == null ||
+                qParams.token == null;
 
             if (error) {
                 const toast: Toast = {
@@ -63,9 +63,13 @@ export class SetupComponent implements OnInit {
 
             // Check if provider exists, redirect if it does
             try {
-                const provider = await this.apiService.getProvider(this.providerId);
+                const provider = await this.apiService.getProvider(
+                    this.providerId
+                );
                 if (provider.name != null) {
-                    this.router.navigate(['/providers', provider.id], { replaceUrl: true });
+                    this.router.navigate(['/providers', provider.id], {
+                        replaceUrl: true,
+                    });
                 }
             } catch (e) {
                 this.validationService.showError(e);
@@ -91,8 +95,15 @@ export class SetupComponent implements OnInit {
             request.token = this.token;
             request.key = key;
 
-            const provider = await this.apiService.postProviderSetup(this.providerId, request);
-            this.toasterService.popAsync('success', null, this.i18nService.t('providerSetup'));
+            const provider = await this.apiService.postProviderSetup(
+                this.providerId,
+                request
+            );
+            this.toasterService.popAsync(
+                'success',
+                null,
+                this.i18nService.t('providerSetup')
+            );
             await this.syncService.fullSync(true);
 
             this.router.navigate(['/providers', provider.id]);

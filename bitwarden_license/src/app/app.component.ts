@@ -9,7 +9,6 @@ import { MaximumVaultTimeoutPolicy } from './policies/maximum-vault-timeout.comp
     templateUrl: '../../../src/app/app.component.html',
 })
 export class AppComponent extends BaseAppComponent {
-
     ngOnInit() {
         super.ngOnInit();
 
@@ -18,5 +17,4 @@ export class AppComponent extends BaseAppComponent {
             new DisablePersonalVaultExportPolicy(),
         ]);
     }
-
 }

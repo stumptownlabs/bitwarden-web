@@ -59,8 +59,15 @@ const routes: Routes = [
                 canActivate: [ProviderGuardService],
                 children: [
                     { path: '', pathMatch: 'full', redirectTo: 'clients' },
-                    { path: 'clients/create', component: CreateOrganizationComponent },
-                    { path: 'clients', component: ClientsComponent, data: { titleId: 'clients' } },
+                    {
+                        path: 'clients/create',
+                        component: CreateOrganizationComponent,
+                    },
+                    {
+                        path: 'clients',
+                        component: ClientsComponent,
+                        data: { titleId: 'clients' },
+                    },
                     {
                         path: 'manage',
                         component: ManageComponent,
@@ -120,4 +127,4 @@ const routes: Routes = [
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule],
 })
-export class ProvidersRoutingModule { }
+export class ProvidersRoutingModule {}
