@@ -207,39 +207,29 @@ jobs:
           docker --version
           docker build -t bitwarden/web .
 
-      - name: Tag rc branch
-        if: github.ref == 'refs/heads/rc'
-        run: docker tag bitwarden/web bitwarden/web:rc
-
-      - name: Tag dev
-        if: github.ref == 'refs/heads/master'
-        run: docker tag bitwarden/web bitwarden/web:dev
-
-      - name: Tag hotfix branch
-        if: github.ref == 'refs/heads/hotfix'
-        run: docker tag bitwarden/web bitwarden/web:hotfix
-
-      - name: List Docker images
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/rc' || github.ref == 'refs/heads/hotfix'
-        run: docker images
-
       - name: Push rc image
         if: github.ref == 'refs/heads/rc'
-        run: docker push bitwarden/web:rc
+        run: |
+          docker tag bitwarden/web bitwarden/web:rc
+          docker push bitwarden/web:rc
         env:
           DOCKER_CONTENT_TRUST: 1
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: ${{ steps.setup-dct.outputs.dct-delegate-repo-passphrase }}
 
       - name: Push dev image
         if: github.ref == 'refs/heads/master'
-        run: docker push bitwarden/web:dev
+        run: |
+          docker tag bitwarden/web bitwarden/web:dev
+          docker push bitwarden/web:dev
         env:
           DOCKER_CONTENT_TRUST: 1
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: ${{ steps.setup-dct.outputs.dct-delegate-repo-passphrase }}
 
       - name: Push hotfix image
         if: github.ref == 'refs/heads/hotfix'
-        run: docker push bitwarden/web:hotfix
+        run: |
+          docker tag bitwarden/web bitwarden/web:hotfix
+          docker push bitwarden/web:hotfix
         env:
           DOCKER_CONTENT_TRUST: 1
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: ${{ steps.setup-dct.outputs.dct-delegate-repo-passphrase }}
