@@ -12,7 +12,7 @@ jobs:
     outputs:
       release_version: ${{ steps.version.outputs.package }}
       tag_version: ${{ steps.version.outputs.tag }}
-      branch-name: ${{ steps.branch.outputs.branch-name }}
+      branch_name: ${{ steps.branch.outputs.branch_name }}
     steps:
       - name: Branch check
         run: |
@@ -27,6 +27,7 @@ jobs:
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f  # 2.3.4
 
       - name: Check Release Version
+        if: false
         id: version
         run: |
           version=$( jq -r ".version" package.json)
@@ -46,7 +47,7 @@ jobs:
         id: branch
         run: |
           BRANCH_NAME=$(basename ${{ github.ref }})
-          echo "::set-output name=branch-name::$BRANCH_NAME"
+          echo "::set-output name=branch_name::$BRANCH_NAME"
 
 
   self-host:
@@ -54,7 +55,7 @@ jobs:
     runs-on: ubuntu-20.04
     needs: setup
     env:
-      _BRANCH_NAME: ${{ needs.setup.outputs.branch-name }}
+      _BRANCH_NAME: ${{ needs.setup.outputs.branch_name }}
       _RELEASE_VERSION: ${{ needs.setup.outputs.release_version }}
     steps:
       - name: Print environment
@@ -86,6 +87,7 @@ jobs:
         run: docker images
 
       - name: Push version and latest image
+        if: false
         env:
           DOCKER_CONTENT_TRUST: 1
           DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: ${{ steps.setup-dct.outputs.dct-delegate-repo-passphrase }}
@@ -99,6 +101,7 @@ jobs:
 
   ghpages-deploy:
     name: Deploy Web Vault
+    if: false
     runs-on: ubuntu-20.04
     needs:
       - setup
@@ -132,7 +135,7 @@ jobs:
         with:
           workflow: build.yml
           workflow_conclusion: success
-          branch: ${{ needs.setup.outputs.branch-name }}
+          branch: ${{ needs.setup.outputs.branch_name }}
           artifacts: web-*-cloud-COMMERCIAL.zip
 
       # This should result in a build directory in the current working directory
@@ -162,6 +165,7 @@ jobs:
 
   release:
     name: Create GitHub Release
+    if: false
     runs-on: ubuntu-20.04
     needs:
       - setup
@@ -173,7 +177,7 @@ jobs:
         with:
           workflow: build.yml
           workflow_conclusion: success
-          branch: ${{ needs.setup.outputs.branch-name }}
+          branch: ${{ needs.setup.outputs.branch_name }}
           artifacts: "web-*-selfhosted-COMMERCIAL.zip,
                       web-*-selfhosted-open-source.zip"
 
