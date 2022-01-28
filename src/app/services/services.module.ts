@@ -88,12 +88,18 @@ export function initFactory(
     htmlEl.classList.add("locale_" + i18nService.translationLocale);
 
     // Initial theme is set in index.html which must be updated if there are any changes to theming logic
-    platformUtilsService.onDefaultSystemThemeChange(async (sysTheme) => {
+    const updateSystemTheme = async (sysTheme: ThemeType.Light | ThemeType.Dark) => {
       const bwTheme = await stateService.getTheme();
       if (bwTheme === ThemeType.System) {
         htmlEl.classList.remove("theme_" + ThemeType.Light, "theme_" + ThemeType.Dark);
         htmlEl.classList.add("theme_" + sysTheme);
       }
+    }
+
+    await updateSystemTheme(await platformUtilsService.getDefaultSystemTheme());
+
+    platformUtilsService.onDefaultSystemThemeChange(async (sysTheme) => {
+        await updateSystemTheme(sysTheme);
     });
 
     const containerService = new ContainerService(cryptoService);
